@@ -1,0 +1,55 @@
+package com.example.GermanArticleQuestionary.controller;
+
+import com.example.GermanArticleQuestionary.model.Endings;
+import com.example.GermanArticleQuestionary.service.EndingsService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/endings")
+@Slf4j
+public class EndingsController {
+
+    private final EndingsService endingsService;
+
+    @GetMapping
+    public List<Endings> getAllEndings(){
+        return endingsService.getAllEndings();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Endings> getEndingsById(@PathVariable int id){
+        return ResponseEntity.ok().body(endingsService.getEndingsById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Endings> createEndings(@RequestBody Endings endings){
+        return ResponseEntity.ok().body(this.endingsService.createEndings(endings));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Endings> updateEndings(@PathVariable int id, @RequestBody Endings endings){
+        endings.setId(id);
+        return ResponseEntity.ok().body(this.endingsService.updateEndings(endings));
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpStatus deleteEndings(@PathVariable int id){
+        this.endingsService.deleteEndings(id);
+        return HttpStatus.OK;
+    }
+
+    @PostMapping(value = "/upload", consumes = {"multipart/form-data"})
+    public ResponseEntity<Integer> uploadEndings(@RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(endingsService.uploadEndings(file));
+    }
+
+}
