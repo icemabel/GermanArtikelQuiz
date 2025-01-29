@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>German Word Endings Quiz</title>
+</head>
+<body>
+<form th:action="@{/}" method="POST">
+
+  <input type="text" name="studentName"
+         placeholder="What's your name?" />
+
+  <input type="submit" />
+
+</form>
+<h1>Guess the German Article</h1>
+
+<p>Word Ending: <span th:text="${wordEnding.endings}"></span></p>
+
+<form method="post" action="/check-article">
+  <input type="hidden" name="ending" th:value="${wordEnding.endings}">
+  <input type="text" name="userArticle" placeholder="Enter article (der, die, das)" required>
+  <button type="submit">Check</button>
+</form>
+
+<p th:if="${message}" th:text="${message}" style="font-weight: bold;"></p>
+<p th:if="${example}" th:text="${example}"></p>
+
+<form method="get" action="/">
+  <button type="submit">Next</button>
+</form>
+</body>
+</html>
+

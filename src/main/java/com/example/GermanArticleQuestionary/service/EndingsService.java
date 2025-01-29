@@ -21,4 +21,8 @@ public interface EndingsService {
     Integer uploadEndings(MultipartFile File);
 
     //Set<Endings> parseCsv(MultipartFile File);
+
+    Endings getRandomEndings();
+
+    Endings findByEnding(String ending);
 }

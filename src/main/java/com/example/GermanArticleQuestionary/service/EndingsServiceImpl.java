@@ -14,11 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.HashSet;
 
 
 @Service
@@ -27,6 +24,8 @@ import java.util.HashSet;
 public class EndingsServiceImpl implements EndingsService {
     @Autowired
     private EndingsRepository endingsRepository;
+
+    private final Random random = new Random();
 
 
     @Override
@@ -116,6 +115,21 @@ public class EndingsServiceImpl implements EndingsService {
 
         endingsRepository.saveAll(endingsSet);
         return endingsSet.size();
+    }
+
+    @Override
+    public Endings getRandomEndings() {
+        List<Endings> allEndings = endingsRepository.findAll();
+        if (allEndings.isEmpty()) {
+            return null; // Return null if no data is found
+        }
+        return allEndings.get(random.nextInt(allEndings.size()));
+    }
+
+    @Override
+    public Endings findByEnding(String ending) {
+        Optional<Endings> wordEnding = endingsRepository.findByEndings(ending);
+        return wordEnding.orElse(null);
     }
 
 
