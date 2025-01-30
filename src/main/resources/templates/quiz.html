@@ -19,13 +19,19 @@
 <p>Word Ending: <span th:text="${wordEnding.endings}"></span></p>
 
 <form method="post" action="/check-article">
-  <input type="hidden" name="ending" th:value="${wordEnding.endings}">
-  <input type="text" name="userArticle" placeholder="Enter article (der, die, das)" required>
+  <input type="hidden" name="endings" th:value="${wordEnding.endings}">
+  <input type="text" name="artikel" placeholder="Enter article (der, die, das)" required>
   <button type="submit">Check</button>
 </form>
 
 <p th:if="${message}" th:text="${message}" style="font-weight: bold;"></p>
 <p th:if="${example}" th:text="${example}"></p>
+
+<!-- ✅ Display the list of user answers -->
+<h2>Previous Attempts:</h2>
+<ul>
+  <li th:each="answer : ${userAnswers}" th:text="${answer}"></li>
+</ul>
 
 <form method="get" action="/">
   <button type="submit">Next</button>

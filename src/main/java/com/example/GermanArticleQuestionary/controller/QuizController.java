@@ -8,17 +8,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/")
 @Slf4j
+@SessionAttributes("userAnswers")
 public class QuizController {
 
     private final EndingsService endingsService;
     private Random random = new Random();
 
+    @ModelAttribute("userAnswers") // ✅ Initialize the list if it doesn't exist
+    public List<String> userAnswers() {
+        return new ArrayList<>();
+    }
 
     @GetMapping("/showExampleForm")
     public String showForm(Model theModel) {
@@ -49,19 +56,29 @@ public class QuizController {
     }
 
     @PostMapping("/check-article")
-    public String checkArticle(@RequestParam String artikel,
-                               @RequestParam String endings,
+    public String checkArticle(@ModelAttribute("wordEnding") Endings userInput,
+                               @ModelAttribute("userAnswers") List<String> userAnswers,
                                Model model) {
-        Endings wordEnding = endingsService.findByEnding(endings);
 
-        if (wordEnding != null && wordEnding.getArtikel().equalsIgnoreCase(artikel)) {
-            model.addAttribute("message", "Correct!");
-            model.addAttribute("example", "Example: " + wordEnding.getExample());
+        Endings wordEnding = endingsService.findByEnding(userInput.getEndings());
+        String resultMessage;
+
+        String correctArticle = wordEnding.getArtikel().toLowerCase();
+        String userArticle = userInput.getArtikel().toLowerCase();
+
+        //log.info("wordEnding: " + wordEnding + ", userInput: " + userInput + ", userArticle: " + userArticle);
+
+        if (correctArticle.equals(userArticle)) {
+            resultMessage = "✅ Correct! " + wordEnding.getEndings() + " → " + wordEnding.getExample();
         } else {
-            model.addAttribute("message", "Not true, try again.");
+            resultMessage = "❌ Not true! " + wordEnding.getEndings() + " → " + wordEnding.getExample() +
+                    " (Your answer: " + userArticle + ")";
         }
+        // ✅ Add result to the list and display it on the screen
+        userAnswers.add(resultMessage);
+        model.addAttribute("userAnswers", userAnswers);
 
-        model.addAttribute("wordEnding", endingsService.getRandomEndings()); // Load new word
+        //model.addAttribute("wordEnding", endingsService.getRandomEndings()); // Load new word
         return "quiz";
     }
 }

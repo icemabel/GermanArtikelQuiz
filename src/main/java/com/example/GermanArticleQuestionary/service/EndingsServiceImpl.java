@@ -126,12 +126,21 @@ public class EndingsServiceImpl implements EndingsService {
         return allEndings.get(random.nextInt(allEndings.size()));
     }
 
-    @Override
+     /*@Override
     public Endings findByEnding(String ending) {
         Optional<Endings> wordEnding = endingsRepository.findByEndings(ending);
         return wordEnding.orElse(null);
     }
-
+ */
+     @Transactional(readOnly = true) // ✅ Ensure proper transactional scope
+     public Endings findByEnding(String endings) {
+         return endingsRepository.findByEndings(endings)
+                 .map(e -> {
+                     System.out.println("Fetched Entity: " + e); // Debugging
+                     return e;
+                 })
+                 .orElse(null);
+     }
 
     private Set<Endings> parseCsv(MultipartFile file) throws IOException {
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
